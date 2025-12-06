@@ -1,0 +1,18 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Create New User{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center">Create New User</h2>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">Create User</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

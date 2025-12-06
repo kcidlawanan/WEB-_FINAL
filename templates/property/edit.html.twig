@@ -1,0 +1,69 @@
+    {% extends 'base.html.twig' %}
+
+    {% block title %}✏️ {{ form.vars.value.id ? 'Edit Property' : 'Add Property' }}{% endblock %}
+
+    {% block body %}
+    <div class="container mt-5">
+        <div class="card shadow-sm border-0 rounded-4 p-4 mx-auto" style="max-width: 700px;">
+            <h3 class="text-center mb-4 text-primary">
+                {{ form.vars.value.id ? '✏️ Edit Property' : '🏠 Add New Property' }}
+            </h3>
+
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            <div class="mb-3">
+                <label class="form-label fw-bold">🏷️ Title</label>
+                {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Enter property title'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">📍 Location</label>
+                {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Enter location'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">📝 Description</label>
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Enter property description', 'rows': '3'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">💰 Price</label>
+                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Enter price'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">🛏️ Bedrooms</label>
+                {{ form_widget(form.bedrooms, {'attr': {'class': 'form-control', 'placeholder': 'Enter number of bedrooms'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">🏠 Category</label>
+                {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">🖼️ Upload Property Image</label>
+                <div class="form-control p-2 bg-light border rounded">
+                    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-4">💾 Save Property</button>
+                <a href="{{ path('app_property_index') }}" class="btn btn-secondary px-4">⬅️ Back</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <style>
+        body {
+            background-color: #f9fafb;
+        }
+        .card {
+            border-radius: 16px;
+        }
+        .form-label {
+            color: #003366;
+        }
+    </style>
+    {% endblock %}

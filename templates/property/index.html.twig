@@ -1,0 +1,165 @@
+        {% extends 'base.html.twig' %}
+
+        {% block title %}🏘️ Property Listings - Lawanan Real Estate{% endblock %}
+
+        {% block body %}
+        <style>
+            /* PROPERTY CARD STYLING */
+            .property-card {
+                border: none;
+                border-radius: 12px;
+                overflow: hidden;
+                background: #ffffff;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+                text-align: center;
+            }
+
+            .property-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            /* IMAGE STYLE */
+            .property-image {
+                width: 100%;
+                height: 230px;
+                object-fit: cover;
+                display: block;
+                border-bottom: 1px solid #eee;
+            }
+
+            /* CONTENT INSIDE CARD */
+            .property-card .content {
+                padding: 20px;
+                text-align: left;
+            }
+
+            .property-card h5 {
+                font-weight: 700;
+                margin-bottom: 8px;
+                color: #003366;
+            }
+
+            .property-card p {
+                font-size: 0.95rem;
+                color: #444;
+                margin: 5px 0;
+            }
+
+            .property-card .price {
+                color: #198754;
+                font-weight: bold;
+                font-size: 1.1rem;
+            }
+
+            .property-card .category-tag {
+                display: inline-block;
+                background: #e7f1ff;
+                color: #004085;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                margin-top: 8px;
+            }
+
+            /* BUTTON STYLE */
+            .property-card .btn {
+                border-radius: 30px;
+                font-weight: 500;
+                padding: 6px 20px;
+                margin-top: 10px;
+            }
+
+            /* SECTION TITLE */
+            .section-title {
+                text-align: center;
+                margin: 60px 0 30px;
+                font-weight: 700;
+                color: #003366;
+            }
+
+            /* RESPONSIVE ALIGNMENT */
+            @media (max-width: 768px) {
+                .property-card {
+                    margin-bottom: 20px;
+                }
+                .property-image {
+                    height: 200px;
+                }
+            }
+        </style>
+
+        <div class="container mt-5">
+        {% for message in app.flashes('success') %}
+            <div id="flash-message" class="alert alert-success text-center fw-bold">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+            <h2 class="section-title">🏘️ Available Properties</h2>
+
+            <div class="row">
+                {% for property in properties %}
+                    <div class="col-md-4 mb-4">
+                        <div class="property-card">
+                            {% if property.image %}
+            <img src="{{ asset('uploads/images/' ~ property.image) }}" alt="{{ property.title }}" class="property-image">
+        {% else %}
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80" alt="Default Property" class="property-image">
+        {% endif %}
+
+
+                            <div class="content">
+                                <h5>{{ property.title }}</h5>
+                                <p>{{ property.description|slice(0, 50) ~ '...' }}</p>
+                                <p class="price">₱{{ property.price|number_format(2, '.', ',') }}</p>
+                                <p>📍 {{ property.location }}</p>
+
+                                {% if property.category %}
+                                    <span class="category-tag">🏷 {{ property.category.name }}</span>
+                                {% else %}
+                                    <span class="category-tag text-muted">🏷 Not specified</span>
+                                {% endif %}
+
+                                <div class="text-center">
+                                    <a href="{{ path('app_property_show', {'id': property.id}) }}" class="btn btn-outline-primary btn-sm mt-3">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <p>No properties found.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            // Automatically hide flash message after 3 seconds
+            document.addEventListener("DOMContentLoaded", function() {
+                const flash = document.getElementById('flash-message');
+                if (flash) {
+                    setTimeout(() => {
+                        flash.classList.add('fade-out');
+                        setTimeout(() => flash.remove(), 500); // remove after fade
+                    }, 3000);
+                }
+            });
+        </script>
+        <table id="datatable" class="table table-bordered table-striped">
+    ...
+</table>
+
+        <style>
+            /* Smooth fade-out animation */
+            .fade-out {
+                opacity: 0;
+                transition: opacity 0.5s ease-out;
+            }
+        </style>
+
+        {% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}🛠️ Our Services - Lawanan Real Estate{% endblock %}
+
+{% block body %}
+<style>
+    .hero {
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                    url('https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+        color: white;
+        padding: 120px 20px;
+        text-align: center;
+    }
+    .hero h1 {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+    .hero p {
+        font-size: 1.25rem;
+        margin-top: 1rem;
+    }
+    .btn-custom {
+        margin-top: 1.5rem;
+        font-size: 1.1rem;
+        padding: 10px 25px;
+        border-radius: 50px;
+    }
+
+    .section-title {
+        text-align: center;
+        margin: 60px 0 30px;
+        font-weight: 600;
+        color: #003366;
+    }
+
+    .service-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: white;
+        text-align: center;
+        padding: 30px 20px;
+        transition: all 0.3s ease-in-out;
+    }
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .service-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #007bff;
+    }
+</style>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <h1>OUR SERVICES</h1>
+    <p>Providing trusted real estate solutions — buy, sell, and manage properties with confidence.</p>
+    <a href="{{ path('app_contact') }}" class="btn btn-light btn-custom">📞 Contact Us</a>
+</section>
+
+<!-- SERVICES SECTION -->
+<section class="container">
+    <h2 class="section-title">✨ What We Offer</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="service-card">
+                <div class="service-icon">🏡</div>
+                <h5 class="fw-bold">Property Buying</h5>
+                <p>We help you find the perfect property that matches your lifestyle and budget — ensuring a smooth purchase process from start to finish.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="service-card">
+                <div class="service-icon">💰</div>
+                <h5 class="fw-bold">Property Selling</h5>
+                <p>List your property with us and attract serious buyers. We handle marketing, valuation, and negotiation to get you the best deal.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="service-card">
+                <div class="service-icon">🧰</div>
+                <h5 class="fw-bold">Property Management</h5>
+                <p>Our expert team manages your properties — from tenant handling to maintenance — giving you peace of mind and steady income.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="text-center py-5">
+    <h2 class="section-title">🏠 Ready to Get Started?</h2>
+    <p>Whether you're buying, selling, or managing a property — Lawanan Real Estate is here to help.</p>
+    <a href="{{ path('app_property_index') }}" class="btn btn-primary btn-custom">✨ Explore Properties</a>
+</section>
+{% endblock %}

@@ -1,0 +1,74 @@
+    {% extends 'base.html.twig' %}
+
+    {% block title %}🏢 About Us - Lawanan Real Estate{% endblock %}
+
+    {% block body %}
+    <div class="container my-5">
+
+        <!-- HEADER -->
+        <div class="text-center mb-5">
+            <h1 class="fw-bold text-primary">Lawanan Real Estate</h1>
+            <p class="text-muted fs-5">Creating Homes. Building Futures.</p>
+        </div>
+
+        <!-- COMPANY PURPOSE -->
+        <section class="mb-5">
+            <h3 class="fw-bold text-uppercase text-primary mb-3">🏠 Company Purpose</h3>
+            <p class="text-muted">
+                A true innovator in Philippine real estate, <strong>Lawan Real Estate</strong> transforms everyday living 
+                by offering holistic and inspiring communities that reflect the diverse lifestyles, dreams, and goals 
+                of every Filipino. We go beyond just selling properties — we build lasting experiences and communities 
+                that our clients are proud to call home.
+            </p>
+        </section>
+
+        <!-- VISION & MISSION -->
+        <section class="row mb-5 text-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4 h-100">
+                    <h4 class="fw-bold text-primary mb-3">🌅 Vision</h4>
+                    <p class="text-muted">
+                        To create admired communities beyond ordinary — where comfort, sustainability, 
+                        and innovation meet timeless Filipino values.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4 h-100">
+                    <h4 class="fw-bold text-primary mb-3">🎯 Mission</h4>
+                    <p class="text-muted">
+                        To deliver delightful, memorable experiences every day by developing 
+                        spaces that inspire connection, growth, and fulfillment.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE VALUES -->
+        <section class="mb-5">
+            <h3 class="fw-bold text-uppercase text-primary mb-4 text-center">💎 Lawanan Core Values</h3>
+            <div class="row g-4">
+                {% set values = {
+                    'Innovation': 'We redefine norms with visionary thinking and groundbreaking approaches to create future-ready communities.',
+                    'Integrity': 'We uphold transparency and the highest ethical standards in all our dealings.',
+                    'Teamwork': 'We believe in collaboration and collective success in achieving our mission.'
+                } %}
+                {% for key, desc in values %}
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 p-4 h-100 text-center">
+                            <h5 class="fw-bold text-primary">{{ key }}</h5>
+                            <p class="text-muted small">{{ desc }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center mt-5 pt-4 border-top">
+            <p class="text-muted small mb-1">© {{ "now"|date("Y") }} Lawanan Real Estate | All Rights Reserved</p>
+            <p class="small text-muted">Built with ❤️ in Dumaguete City</p>
+        </footer>
+
+    </div>
+    {% endblock %}
