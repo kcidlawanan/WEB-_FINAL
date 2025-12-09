@@ -18,6 +18,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    # Doctrine event subscriber for activity logging
+    App\EventSubscriber\ActivityLoggerSubscriber:
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
 parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads/images'
 

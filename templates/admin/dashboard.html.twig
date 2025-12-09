@@ -1,0 +1,325 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<style>
+    .dashboard-header {
+        margin-bottom: 30px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border-left: 5px solid #667eea;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card.users { border-left-color: #667eea; }
+    .stat-card.staff { border-left-color: #22c55e; }
+    .stat-card.properties { border-left-color: #0dcaf0; }
+
+    .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #718096;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .activities-section {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .activities-section h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    #dashboardTable {
+        background: white !important;
+    }
+
+    #dashboardTable thead th {
+        background-color: #2d3748 !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 14px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none !important;
+    }
+
+    #dashboardTable tbody td {
+        padding: 12px 14px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+    }
+
+    #dashboardTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    .badge-action {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-login {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-logout {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-create {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-update {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-delete {
+        background-color: #fecaca;
+        color: #7f1d1d;
+    }
+
+    .time-cell {
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 0.85rem;
+        color: #4b5563;
+    }
+
+    .user-cell {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .role-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .role-admin {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .role-staff {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .target-cell {
+        font-size: 0.9rem;
+        color: #4b5563;
+        max-width: 300px;
+        word-break: break-word;
+    }
+
+    .ip-cell {
+        font-size: 0.85rem;
+        color: #4b5563;
+        font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .ip-cell code {
+        background-color: #f0f4f8;
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: #0f172a;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #718096;
+    }
+
+    .empty-state-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1>📊 Admin Dashboard</h1>
+        <p class="text-muted">Overview of system activity and records</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card users">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value">{{ totalUsers }}</div>
+        </div>
+
+        <div class="stat-card staff">
+            <div class="stat-icon">👨‍💼</div>
+            <div class="stat-label">Total Staff</div>
+            <div class="stat-value">{{ totalStaff }}</div>
+        </div>
+
+        <div class="stat-card properties">
+            <div class="stat-icon">🏠</div>
+            <div class="stat-label">Total Properties</div>
+            <div class="stat-value">{{ totalProperties }}</div>
+        </div>
+    </div>
+
+    <!-- Recent Activities Section -->
+    <div class="activities-section">
+        <h2>📋 Recent Activities</h2>
+        
+        {% if recentActivities|length > 0 %}
+            <table id="dashboardTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Timestamp</th>
+                        <th style="width: 12%;">User</th>
+                        <th style="width: 10%;">Role</th>
+                        <th style="width: 10%;">Action</th>
+                        <th style="width: 35%;">Target Data</th>
+                        <th style="width: 18%;">IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in recentActivities %}
+                        <tr>
+                            <td class="time-cell">
+                                🕐 {{ activity.createdAt|date('M d, Y') }}<br/>
+                                <small>{{ activity.createdAt|date('H:i:s') }}</small>
+                            </td>
+                            <td class="user-cell">{{ activity.username ?: '🔒 System' }}</td>
+                            <td>
+                                {% if 'ADMIN' in activity.role %}
+                                    <span class="badge role-admin">ADMIN</span>
+                                {% elseif 'STAFF' in activity.role %}
+                                    <span class="badge role-staff">STAFF</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ activity.role }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if activity.action == 'LOGIN' %}
+                                    <span class="badge-action badge-login">✓ LOGIN</span>
+                                {% elseif activity.action == 'LOGOUT' %}
+                                    <span class="badge-action badge-logout">✕ LOGOUT</span>
+                                {% elseif activity.action == 'CREATE' %}
+                                    <span class="badge-action badge-create">+ CREATE</span>
+                                {% elseif activity.action == 'UPDATE' %}
+                                    <span class="badge-action badge-update">✎ UPDATE</span>
+                                {% elseif activity.action == 'DELETE' %}
+                                    <span class="badge-action badge-delete">✗ DELETE</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ activity.action }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="target-cell">
+                                {{ activity.targetData ?: '—' }}
+                            </td>
+                            <td class="ip-cell">
+                                {% if activity.ipAddress %}
+                                    <code>{{ activity.ipAddress }}</code>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h5>No Activities Yet</h5>
+                <p>System activity will appear here as users create, edit, or delete records.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Initialize DataTable
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('dashboardTable');
+        if (table && !$.fn.DataTable.isDataTable(table)) {
+            $(table).DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100],
+                order: [[0, 'desc']],
+                language: {
+                    search: "🔍 Search activities:",
+                    lengthMenu: "Show _MENU_ entries per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ activities",
+                    infoEmpty: "No activities available",
+                    zeroRecords: "No matching activities found",
+                    paginate: {
+                        previous: "← Previous",
+                        next: "Next →"
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+{% endblock %}

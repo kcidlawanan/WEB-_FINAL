@@ -15,25 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     {% block stylesheets %}{% endblock %}
-    
-    <style>
-        html, body {
-            height: 100%;
-        }
-        
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        main {
-            flex: 1;
-        }
-        
-        .footer {
-            margin-top: auto;
-        }
-    </style>
 </head>
 <body>
     <!-- 🌆 NAVBAR -->
@@ -46,13 +27,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ path('app_property_index') }}">Properties</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_service') }}">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_about') }}">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_contact') }}">Contact Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_profile') }}">Profile</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_logout') }}">Logout</a></li> 
                 </ul>
             </div>
         </div>
@@ -64,16 +39,16 @@
     </main>
 
    <!-- ✅ FIXED FOOTER -->
-    <footer class="footer bg-dark text-white text-center py-3">
+    <footer class="footer bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">© {{ "now"|date("Y") }} Lawanan Real Estate — All Rights Reserved</p>
     </footer>
 </body>
-
 <!-- ✅ jQuery (required by some DataTables builds) -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- ✅ DataTables JS -->
 <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.min.js"></script>
+
 
     <!-- ✅ DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.min.css">

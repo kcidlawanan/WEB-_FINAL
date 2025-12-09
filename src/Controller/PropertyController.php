@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Property;
+use App\Entity\ActivityLog;
 use App\Form\PropertyType;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +27,10 @@ final class PropertyController extends AbstractController
     #[Route('/new', name: 'app_property_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $property = new Property();
         $form = $this->createForm(PropertyType::class, $property);
         $form->handleRequest($request);
@@ -47,12 +52,35 @@ if ($imageFile) {
 }
 
 
-            $entityManager->persist($property);
-            $entityManager->flush();
+                // assign owner when staff creates a property
+                $user = $this->getUser();
+                if ($user && method_exists($property, 'setOwner')) {
+                    $property->setOwner($user);
+                }
 
-            $this->addFlash('success', 'Property added successfully!');
+                $entityManager->persist($property);
+                $entityManager->flush();
 
-           return $this->redirectToRoute('app_admin');
+                // Log activity
+                $user = $this->getUser();
+                $log = new ActivityLog();
+                $log->setUserId($user?->getId());
+                $log->setUsername($user?->getUserIdentifier());
+                $roles = $user?->getRoles();
+                $log->setRole(is_array($roles) ? implode(',', $roles) : $roles);
+                $log->setAction('CREATE');
+                $log->setTargetData('Property: ' . $property->getTitle() . ' (ID: ' . $property->getId() . ')');
+                $log->setIpAddress($request->getClientIp());
+                $entityManager->persist($log);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Property added successfully!');
+
+                // redirect staff to staff dashboard, admins to admin dashboard
+                if ($this->isGranted('ROLE_ADMIN')) {
+                    return $this->redirectToRoute('admin_dashboard');
+                }
+                return $this->redirectToRoute('app_staff');
         }
 
         return $this->render('property/new.html.twig', [
@@ -75,7 +103,19 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
     $form = $this->createForm(PropertyType::class, $property);
     $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
+        if (!$this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // enforce ownership: staff can only edit their own properties
+        $user = $this->getUser();
+        if ($this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN')) {
+            if (method_exists($property, 'getOwner') && $property->getOwner()?->getId() !== $user?->getId()) {
+                throw $this->createAccessDeniedException('You are not allowed to edit this record.');
+            }
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
         $imageFile = $form->get('image')->getData();
 
         if ($imageFile) {
@@ -94,10 +134,26 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
             $property->setImage($newFilename);
         }
 
-        $entityManager->flush();
+                $entityManager->flush();
 
-        $this->addFlash('success', 'Property updated successfully!');
-      return $this->redirectToRoute('app_admin');
+                // Log activity
+                $user = $this->getUser();
+                $log = new ActivityLog();
+                $log->setUserId($user?->getId());
+                $log->setUsername($user?->getUserIdentifier());
+                $roles = $user?->getRoles();
+                $log->setRole(is_array($roles) ? implode(',', $roles) : $roles);
+                $log->setAction('UPDATE');
+                $log->setTargetData('Property: ' . $property->getTitle() . ' (ID: ' . $property->getId() . ')');
+                $log->setIpAddress($request->getClientIp());
+                $entityManager->persist($log);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Property updated successfully!');
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('admin_dashboard');
+            }
+            return $this->redirectToRoute('app_staff');
 
     }
 
@@ -110,13 +166,41 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
     #[Route('/{id}', name: 'app_property_delete', methods: ['POST'])]
     public function delete(Request $request, Property $property, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $property->getId(), $request->getPayload()->getString('_token'))) {
+        if (!$this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // ownership check for delete
+        $user = $this->getUser();
+        if ($this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN')) {
+            if (method_exists($property, 'getOwner') && $property->getOwner()?->getId() !== $user?->getId()) {
+                throw $this->createAccessDeniedException('You are not allowed to delete this record.');
+            }
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $property->getId(), $request->request->get('_token'))) {
+            // Log activity before deletion
+            $user = $this->getUser();
+            $log = new ActivityLog();
+            $log->setUserId($user?->getId());
+            $log->setUsername($user?->getUserIdentifier());
+            $roles = $user?->getRoles();
+            $log->setRole(is_array($roles) ? implode(',', $roles) : $roles);
+            $log->setAction('DELETE');
+            $log->setTargetData('Property: ' . $property->getTitle() . ' (ID: ' . $property->getId() . ')');
+            $log->setIpAddress($request->getClientIp());
+            $entityManager->persist($log);
+
             $entityManager->remove($property);
             $entityManager->flush();
         }
 
         $this->addFlash('success', 'Property deleted successfully!');
-        return $this->redirectToRoute('app_admin');
+        // Redirect staff back to their dashboard, admins to admin dashboard
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('admin_dashboard');
+        }
+        return $this->redirectToRoute('app_staff');
 
     }
 }

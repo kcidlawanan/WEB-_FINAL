@@ -13,14 +13,14 @@ class AdminProfileController extends AbstractController
     #[Route('/admin/profile', name: 'admin_profile')]
     public function profile(): Response
     {
-        return $this->render('admin/profile/view.html.twig', [
-            'user' => $this->getUser(),
-        ]);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        return $this->render('admin/profile.html.twig');
     }
 
     #[Route('/admin/profile/change-password', name: 'admin_change_password')]
     public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = $this->getUser();
 
         if ($request->isMethod('POST')) {

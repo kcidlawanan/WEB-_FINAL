@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\ChangePasswordFormType;
+use App\Form\ChangePasswordType;
 
 class ChangePasswordController extends AbstractController
 {
@@ -17,15 +17,21 @@ class ChangePasswordController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager
     ) {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
-        $form = $this->createForm(ChangePasswordFormType::class);
+        $form = $this->createForm(ChangePasswordType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $newPassword = $form->get('plainPassword')->getData();
-
             $user = $this->getUser();
+
+            $currentPassword = $form->get('currentPassword')->getData();
+            $newPassword = $form->get('newPassword')->getData();
+            if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+                $this->addFlash('error', 'Current password is incorrect.');
+                return $this->redirectToRoute('app_change_password');
+            }
 
             $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
             $user->setPassword($hashedPassword);
@@ -37,7 +43,7 @@ class ChangePasswordController extends AbstractController
         }
 
         return $this->render('profile/change_password.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 }

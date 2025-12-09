@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\ActivityLog;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
@@ -22,7 +24,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    public function __construct(private UrlGeneratorInterface $urlGenerator, private EntityManagerInterface $entityManager)
     {
     }
 
@@ -47,10 +49,36 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
+        // Log login activity
+        $user = $token->getUser();
+        if ($user) {
+            try {
+                $log = new ActivityLog();
+                $log->setUserId(method_exists($user, 'getId') ? $user->getId() : null);
+                $log->setUsername(method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : (method_exists($user, 'getUsername') ? $user->getUsername() : null));
+                $roles = method_exists($user, 'getRoles') ? $user->getRoles() : [];
+                $log->setRole(is_array($roles) ? implode(',', $roles) : (string)$roles);
+                $log->setAction('LOGIN');
+                $log->setTargetData(null);
+                $log->setIpAddress($request->getClientIp());
+                $this->entityManager->persist($log);
+                $this->entityManager->flush();
+            } catch (\Throwable $e) {
+                // Do not break authentication flow if logging fails
+            }
+        }
 
-        // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        // Redirect based on role: admins -> admin dashboard, staff -> staff dashboard, otherwise to profile
+        $roles = method_exists($user, 'getRoles') ? $user->getRoles() : [];
+        $roles = is_array($roles) ? $roles : [$roles];
+        if (in_array('ROLE_ADMIN', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_admin'));
+        }
+        if (in_array('ROLE_STAFF', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_staff'));
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('app_profile'));
     }
 
     protected function getLoginUrl(Request $request): string

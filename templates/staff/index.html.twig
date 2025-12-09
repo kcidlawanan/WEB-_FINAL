@@ -1,8 +1,10 @@
-{% extends 'base_admin.html.twig' %}
-
-{% block title %}🏢 Admin Dashboard - Lawanan Real Estate{% endblock %}
+{% extends 'staff.html.twig' %}
 
 {% block body %}
+<header>
+    <h1>🏠 LAWANAN REAL ESTATE</h1>
+</header>
+
 <style>
     .section-header {
         margin-bottom: 30px;
@@ -41,12 +43,12 @@
     }
 
     /* --- TABLE STYLE --- */
-    #adminTable {
+    #staffTable {
         background: white !important;
         border-collapse: collapse !important;
     }
 
-    #adminTable thead th {
+    #staffTable thead th {
         background-color: #2d3748 !important;
         color: white !important;
         font-weight: 600;
@@ -57,14 +59,14 @@
         border: none !important;
     }
 
-    #adminTable tbody td {
+    #staffTable tbody td {
         padding: 12px 14px;
         vertical-align: middle;
         border-bottom: 1px solid #e2e8f0;
         color: #2d3748;
     }
 
-    #adminTable tbody tr:hover {
+    #staffTable tbody tr:hover {
         background-color: #f7fafc !important;
     }
 
@@ -165,16 +167,7 @@
     .price-cell {
         font-weight: 600;
         color: #22c55e;
-    }
-
-    .bedrooms-cell {
-        text-align: center;
-        font-weight: 600;
-        color: #0dcaf0;
-    }
 </style>
-
-<!-- hero banner removed -->
 
 <div class="container-fluid">
     {% for message in app.flashes('success') %}
@@ -191,7 +184,7 @@
             <a href="{{ path('app_property_new') }}" class="btn btn-success">➕ Add New Property</a>
         </div>
 
-    <table id="adminTable" class="table table-bordered table-striped admin-table">
+    <table id="staffTable" class="table table-bordered table-striped admin-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -224,7 +217,7 @@
                     <div class="action-buttons">
                         {% if is_granted('ROLE_ADMIN') or (property.getOwner is defined and property.owner is not null and property.owner.id == app.user.id) %}
                             <a href="{{ path('app_property_edit', {'id': property.id}) }}" class="btn btn-warning btn-sm">✏️ Edit</a>
-                            <form method="post" action="{{ path('app_admin_property_delete', {'id': property.id}) }}" style="display:inline-block;">
+                            <form method="post" action="{{ path('app_property_delete', {'id': property.id}) }}" style="display:inline-block;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id) }}">
                                 <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
                             </form>
@@ -252,11 +245,10 @@
     }, 3000);
 </script>
 
-
 <!-- DATATABLE INIT -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        new DataTable('#adminTable', {
+        new DataTable('#staffTable', {
             responsive: true,
             pageLength: 5,
             lengthMenu: [5, 10, 25, 50],

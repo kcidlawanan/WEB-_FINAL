@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <div class="card shadow-sm border-0 rounded-4 p-4 mx-auto" style="max-width: 700px;">
         <h3 class="text-center mb-4 text-primary">
-            {{ form.vars.value.id ? '✏️ Edit Property' : '🏠 Add New Property' }}
+            {{ form.vars.value.id ? '✏️ Edit Property' : 'Add New Property' }}
         </h3>
 
         {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
@@ -54,6 +54,29 @@
         {{ form_end(form) }}
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (!form) return;
+    form.addEventListener('submit', function () {
+        const price = form.querySelector('input[name$="[price]"]');
+        const bedrooms = form.querySelector('input[name$="[bedrooms]"]');
+        if (price && price.value) {
+            // Strip currency symbols, commas and keep only digits and dot
+            price.value = price.value.replace(/[^0-9.]/g, '');
+            // Remove extra dots
+            const parts = price.value.split('.');
+            if (parts.length > 2) {
+                price.value = parts[0] + '.' + parts.slice(1).join('');
+            }
+        }
+        if (bedrooms && bedrooms.value) {
+            bedrooms.value = bedrooms.value.replace(/[^0-9]/g, '');
+        }
+    });
+});
+</script>
 
 <style>
     body {
