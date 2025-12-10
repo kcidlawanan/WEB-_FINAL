@@ -14,13 +14,8 @@ class CategoryFixtures extends Fixture
             'For Sale',
             'For Rent',
             'For Lease',
-            'Commercial',
-            'Residential',
-            'Condo',
             'House',
-            'Townhouse',
             'Apartment',
-            'Land',
         ];
 
         foreach ($categories as $categoryName) {

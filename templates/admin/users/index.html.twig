@@ -262,6 +262,7 @@
                     <th>Username</th>
                     <th>Email</th>
                     <th>Roles</th>
+                    <th>Status</th>
                     <th>Created</th>
                     <th>Actions</th>
                 </tr>
@@ -284,6 +285,13 @@
                             {% endfor %}
                         </div>
                     </td>
+                    <td>
+                        {% if user.isActive %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </td>
                     <td class="date-cell">{{ user.createdAt|date('Y-m-d') }}</td>
                     <td>
                         <div class="action-buttons">
@@ -293,7 +301,9 @@
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
                             </form>
                             <form method="post" action="{{ path('admin_users_disable', {'id': user.id}) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-secondary btn-sm">🚫 Disable</button>
+                                <button type="submit" class="btn btn-sm {% if user.isActive %}btn-secondary{% else %}btn-success{% endif %}">
+                                    {% if user.isActive %}🚫 Disable{% else %}✅ Enable{% endif %}
+                                </button>
                             </form>
                         </div>
                     </td>

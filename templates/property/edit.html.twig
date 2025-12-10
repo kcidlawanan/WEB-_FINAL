@@ -1,4 +1,4 @@
-    {% extends 'base.html.twig' %}
+    {% extends 'property.html.twig' %}
 
     {% block title %}✏️ {{ form.vars.value.id ? 'Edit Property' : 'Add Property' }}{% endblock %}
 
@@ -49,7 +49,7 @@
 
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-primary px-4">💾 Save Property</button>
-                <a href="{{ path('app_property_index') }}" class="btn btn-secondary px-4">⬅️ Back</a>
+                <a href="{{ path('app_admin') }}" class="btn btn-secondary px-4">⬅️ Back</a>
             </div>
             {{ form_end(form) }}
         </div>

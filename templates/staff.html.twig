@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Lawanan Real Estate{% endblock %}</title>
+    <title>{% block title %}🏠Lawanan Real Estate{% endblock %}</title>
 
     <!-- ✅ Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,109 +16,36 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.min.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             display: flex;
-            flex-direction: column;
             min-height: 100vh;
-            background-color: #f5f6fa;
-        }
-
-        .main-wrapper {
-            display: flex;
-            flex: 1;
+            flex-direction: column;
         }
 
         .sidebar {
-            width: 200px;
+            width: 250px;
             background-color: #343a40;
             color: white;
             position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 30px 0;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            padding-top: 20px;
         }
 
-        .sidebar-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #95a5a6;
-            padding: 15px 20px 10px;
-            margin-top: 20px;
-        }
-
-        .sidebar-title:first-child {
-            margin-top: 0;
-        }
-
-        .sidebar a, .sidebar-item {
-            color: #ecf0f1;
-            text-decoration: none;
-            padding: 12px 20px;
-            display: block;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar-item:hover {
-            background-color: rgba(102, 126, 234, 0.1);
-            border-left-color: #667eea;
-        }
-
-        .sidebar a.active {
-            background-color: rgba(102, 126, 234, 0.2);
-            border-left-color: #667eea;
-            color: #667eea;
-            font-weight: 600;
-        }
-
-
-        .sidebar-profile-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        .sidebar a {
             color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
         }
 
         .content {
-            margin-left: 200px;
-            padding: 30px;
-            flex-grow: 1;
-            width: calc(100% - 200px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        footer {
-            margin-left: 200px;
-            background-color: #343a40;
-            color: white;
-            text-align: center;
+            margin-left: 250px;
             padding: 20px;
-            margin-top: auto;
-        }
-
-        header {
-            background: white;
-            padding: 20px 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-            border-radius: 8px;
-        }
-
-        header h1 {
-            margin: 0;
-            color: #343a40;
-            font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: 0.5px;
+            flex-grow: 1;
         }
 
         .navbar {
@@ -162,6 +89,28 @@
         .sidebar a { padding: 12px 18px; }
         .sidebar .sidebar-title { color: #fff; text-decoration: none; }
 
+        /* Sidebar sections */
+        .sidebar-section {
+            border-top: 1px solid #495057;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        .sidebar-section:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #adb5bd;
+            padding: 8px 18px;
+            margin: 0;
+        }
+
         /* Make main container breathe */
         .content { padding: 36px; }
     </style>
@@ -169,27 +118,45 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-    <div class="main-wrapper">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div style="padding: 0 20px; margin-bottom: 30px;">
-                <h2 style="font-size: 1.3rem; margin: 0; color: #667eea;">STAFF</h2>
-                <p style="margin: 0; color: #95a5a6; font-size: 0.85rem;">DASHBOARD</p>
-            </div>
-
-            <div class="sidebar-title"></div>
-            <a href="{{ path('app_staff') }}" class="active">📊 Dashboard</a>
-            
-
-        <div class="sidebar-title"></div>
-        <a href="{{ path('app_profile') }}" class="sidebar-item">👤 My Profile</a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2 class="text-center"><a href="{{ path('app_staff') }}" class="sidebar-title">🏠Staff Dashboard</a></h2>
+        
+        <!-- Main Navigation -->
+        <div class="sidebar-section">
+            <a href="{{ path('app_property_index') }}">📋 Property List</a>
+            {% if is_granted('ROLE_STAFF') %}
+            {% endif %}
         </div>
 
-        <!-- 🌸 MAIN CONTENT -->
-        <main class="content">
-            {% block body %}{% endblock %}
-        </main>
+        <!-- Admin Account Section -->
+        {% if is_granted('ROLE_STAFF') %}
+        <div class="sidebar-section">
+            <a href="{{ path('app_profile') }}">👤 My Profile</a>
+        </div>
+        {% endif %}
     </div>
+
+    <!-- 🌆 NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Add navbar items if needed -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🌸 MAIN CONTENT -->
+    <main class="content">
+        {% block body %}{% endblock %}
+    </main>
 
     <!-- 🌍 FOOTER -->
     <footer class="bg-dark text-white text-center py-3 mt-5">

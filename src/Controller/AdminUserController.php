@@ -133,10 +133,28 @@ class AdminUserController extends AbstractController
     public function disable(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user->setIsActive(false);
+        
+        // Toggle the active status
+        $wasActive = $user->isActive();
+        $user->setIsActive(!$user->isActive());
         $entityManager->flush();
 
-        $this->addFlash('success', 'User account disabled successfully!');
+        // Log user status change
+        $adminUser = $this->getUser();
+        $log = new ActivityLog();
+        $log->setUserId($adminUser?->getId());
+        $log->setUsername($adminUser?->getUserIdentifier());
+        $roles = $adminUser?->getRoles();
+        $log->setRole(is_array($roles) ? implode(',', $roles) : $roles);
+        $log->setAction('UPDATE');
+        $action = $user->isActive() ? 'ENABLED' : 'DISABLED';
+        $log->setTargetData('User: ' . $user->getEmail() . ' (ID: ' . $user->getId() . ') - Status ' . $action);
+        $log->setIpAddress($request->getClientIp());
+        $entityManager->persist($log);
+        $entityManager->flush();
+
+        $message = $user->isActive() ? 'User account enabled successfully!' : 'User account disabled successfully!';
+        $this->addFlash('success', $message);
         return $this->redirectToRoute('admin_users');
     }
 
