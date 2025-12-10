@@ -15,16 +15,12 @@ final class StaffController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_STAFF');
 
-        // Staff should see only their own properties; admins see all
-        $user = $this->getUser();
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $properties = $propertyRepository->findAll();
-        } else {
-            $properties = $propertyRepository->findBy(['owner' => $user]);
-        }
+        // Staff can see all properties but can only edit their own
+        // Admins can see and edit all properties
+        $properties = $propertyRepository->findAll();
 
         return $this->render('staff/index.html.twig', [
-            'user' => $user,
+            'user' => $this->getUser(),
             'properties' => $properties,
         ]);
     }

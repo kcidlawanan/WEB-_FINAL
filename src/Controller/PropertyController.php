@@ -76,9 +76,9 @@ if ($imageFile) {
 
                 $this->addFlash('success', 'Property added successfully!');
 
-                // redirect staff to staff dashboard, admins to admin dashboard
+                // redirect staff to staff property management, admins to admin property management
                 if ($this->isGranted('ROLE_ADMIN')) {
-                    return $this->redirectToRoute('admin_dashboard');
+                    return $this->redirectToRoute('app_admin');
                 }
                 return $this->redirectToRoute('app_staff');
         }
@@ -151,7 +151,7 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
 
                 $this->addFlash('success', 'Property updated successfully!');
             if ($this->isGranted('ROLE_ADMIN')) {
-                return $this->redirectToRoute('admin_dashboard');
+                return $this->redirectToRoute('app_admin');
             }
             return $this->redirectToRoute('app_staff');
 
@@ -194,13 +194,12 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
             $entityManager->remove($property);
             $entityManager->flush();
         }
-
-        $this->addFlash('success', 'Property deleted successfully!');
-        // Redirect staff back to their dashboard, admins to admin dashboard
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return $this->redirectToRoute('admin_dashboard');
-        }
-        return $this->redirectToRoute('app_staff');
+            $this->addFlash('success', 'Property deleted successfully!');
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_admin');
+            }
+            return $this->redirectToRoute('app_staff');
 
     }
-}
+    }
+

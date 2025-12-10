@@ -2,7 +2,7 @@
 
 {% block body %}
 <header>
-    <h1>🏠 LAWANAN REAL ESTATE</h1>
+    <h1></h1>
 </header>
 
 <style>
@@ -194,6 +194,7 @@
                 <th>Location</th>
                 <th>Bedrooms</th>
                 <th>Category</th>
+                <th>Added By</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -214,22 +215,33 @@
                     {% endif %}
                 </td>
                 <td>
+                    {% if property.owner %}
+                        {% if property.owner.id == app.user.id %}
+                            <span class="badge bg-success" style="font-size: 0.85rem;">👤 You</span>
+                        {% else %}
+                            <span class="badge bg-info" style="font-size: 0.85rem;">👤 {{ property.owner.name ?? property.owner.email }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
                     <div class="action-buttons">
-                        {% if is_granted('ROLE_ADMIN') or (property.getOwner is defined and property.owner is not null and property.owner.id == app.user.id) %}
+                        {% if is_granted('ROLE_ADMIN') or (property.owner is not null and property.owner.id == app.user.id) %}
                             <a href="{{ path('app_property_edit', {'id': property.id}) }}" class="btn btn-warning btn-sm">✏️ Edit</a>
                             <form method="post" action="{{ path('app_property_delete', {'id': property.id}) }}" style="display:inline-block;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id) }}">
                                 <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
                             </form>
                         {% else %}
-                            <span class="text-muted">—</span>
+                            <span class="text-muted text-center" style="display: inline-block; padding: 6px 12px;">🔒 Read Only</span>
                         {% endif %}
                     </div>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="8" class="text-center text-muted" style="padding: 30px;">🏚️ No properties found.</td>
+                <td colspan="9" class="text-center text-muted" style="padding: 30px;">🏚️ No properties found.</td>
             </tr>
         {% endfor %}
         </tbody>

@@ -1,4 +1,4 @@
-        {% extends 'base_property.html.twig' %}
+       {% extends is_granted('ROLE_ADMIN') ? 'admin.html.twig' : 'staff.html.twig' %}
 
         {% block title %}🏘️ Property Listings - Lawanan Real Estate{% endblock %}
 
@@ -150,10 +150,6 @@
                 }
             });
         </script>
-        <table id="datatable" class="table table-bordered table-striped">
-    ...
-</table>
-
         <style>
             /* Smooth fade-out animation */
             .fade-out {
