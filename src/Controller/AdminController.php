@@ -78,6 +78,6 @@ final class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Property deleted successfully.');
-        return $this->redirectToRoute('admin_dashboard');
+        return $this->redirectToRoute('app_admin');
     }
 }
