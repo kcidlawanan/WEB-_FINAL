@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Property;
 use App\Entity\ActivityLog;
+<<<<<<< HEAD
 use App\Entity\Transaction;
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 use App\Form\PropertyType;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -202,6 +205,7 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
             return $this->redirectToRoute('app_staff');
 
     }
+<<<<<<< HEAD
 
     #[Route('/{id}/purchase', name: 'app_property_purchase', methods: ['POST'])]
     public function purchase(Property $property, Request $request, EntityManagerInterface $entityManager): Response
@@ -280,5 +284,7 @@ public function edit(Request $request, Property $property, EntityManagerInterfac
         $this->addFlash('success', 'Property rented successfully! Property is now marked as RENTED.');
         return $this->redirectToRoute('app_property_show', ['id' => $property->getId()]);
     }
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
     }
 

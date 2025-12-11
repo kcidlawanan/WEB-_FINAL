@@ -8,7 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+<<<<<<< HEAD
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 
 class ContactController extends AbstractController
 {
@@ -36,11 +39,14 @@ class ContactController extends AbstractController
     #[Route('/admin/contact/new', name: 'app_contact_new', methods: ['GET', 'POST'])]
     public function new(): Response
     {
+<<<<<<< HEAD
         // Only ROLE_ADMIN can access admin contact management
         if (!$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException('Access denied. Only administrators can manage contacts.');
         }
         
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
         // For now, redirect to the public contact form (reuse existing view)
         return $this->redirectToRoute('app_contact');
     }
@@ -48,11 +54,14 @@ class ContactController extends AbstractController
     #[Route('/admin/contact/edit/{id}', name: 'app_contact_edit', methods: ['GET', 'POST'])]
     public function edit(Contact $contact): Response
     {
+<<<<<<< HEAD
         // Only ROLE_ADMIN can access admin contact management
         if (!$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException('Access denied. Only administrators can manage contacts.');
         }
         
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
         // Minimal stub: redirect to public contact form for now.
         // You can expand this to an admin edit form later.
         return $this->redirectToRoute('app_contact');
@@ -61,11 +70,14 @@ class ContactController extends AbstractController
     #[Route('/admin/contact/delete/{id}', name: 'app_contact_delete', methods: ['POST','GET'])]
     public function delete(Contact $contact, EntityManagerInterface $entityManager): Response
     {
+<<<<<<< HEAD
         // Only ROLE_ADMIN can delete contacts
         if (!$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException('Access denied. Only administrators can delete contacts.');
         }
         
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
         $entityManager->remove($contact);
         $entityManager->flush();
 

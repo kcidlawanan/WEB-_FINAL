@@ -9,7 +9,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+<<<<<<< HEAD
 use App\Validator\Constraints\CurrentPassword;
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 
 class ChangePasswordType extends AbstractType
 {
@@ -23,9 +26,12 @@ class ChangePasswordType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your current password.',
                     ]),
+<<<<<<< HEAD
                     new CurrentPassword([
                         'message' => 'Current password is incorrect.',
                     ]),
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
                 ],
             ])
             ->add('newPassword', RepeatedType::class, [

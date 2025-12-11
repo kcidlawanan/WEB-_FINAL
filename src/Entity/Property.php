@@ -44,9 +44,12 @@ class Property
 #[ORM\JoinColumn(nullable: true)]
 private ?Category $category = null;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $status = null;
 
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 
 
     public function getId(): ?int
@@ -174,6 +177,7 @@ private ?Category $category = null;
         return $this;
     }
 
+<<<<<<< HEAD
     public function getStatus(): ?string
     {
         return $this->status;
@@ -186,4 +190,6 @@ private ?Category $category = null;
         return $this;
     }
 
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 }

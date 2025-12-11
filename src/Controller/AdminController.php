@@ -33,10 +33,14 @@ final class AdminController extends AbstractController
     #[Route('/dashboard', name: 'admin_dashboard')]
     public function dashboard(EntityManagerInterface $entityManager, PropertyRepository $propertyRepository, ActivityLogRepository $activityLogRepository): Response
     {
+<<<<<<< HEAD
         // Only ROLE_ADMIN can access the admin dashboard
         if (!$this->isGranted('ROLE_ADMIN')) {
             throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException('Access denied. Only administrators can view the dashboard.');
         }
+=======
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 
         $userRepo = $entityManager->getRepository(User::class);
         $allUsers = $userRepo->findAll();
@@ -51,6 +55,7 @@ final class AdminController extends AbstractController
 
         $totalProperties = $propertyRepository->count([]);
 
+<<<<<<< HEAD
         // Calculate total sales from purchase transactions
         $transactionRepo = $entityManager->getRepository(\App\Entity\Transaction::class);
         $purchaseTransactions = $transactionRepo->findBy(['type' => 'purchase']);
@@ -59,13 +64,18 @@ final class AdminController extends AbstractController
             $totalSales += (float)$transaction->getAmount();
         }
 
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
         $recentActivities = $activityLogRepository->findRecent(10);
 
         return $this->render('admin/dashboard.html.twig', [
             'totalUsers' => $totalUsers,
             'totalStaff' => $totalStaff,
             'totalProperties' => $totalProperties,
+<<<<<<< HEAD
             'totalSales' => $totalSales,
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
             'recentActivities' => $recentActivities,
         ]);
     }

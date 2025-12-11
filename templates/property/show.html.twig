@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 {% extends 'property.html.twig' %}
+=======
+{% extends 'base.html.twig' %}
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
 
 {% block title %}🏠 {{ property.title }} - Lawanan Real Estate{% endblock %}
 
@@ -64,6 +68,7 @@
         color: #003366;
     }
 
+<<<<<<< HEAD
     .action-buttons {
         margin-top: 25px;
         display: flex;
@@ -116,6 +121,8 @@
         min-width: auto;
     }
 
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
     @media (max-width: 768px) {
         .property-image {
             height: 250px;
@@ -143,6 +150,7 @@
             <span class="category-tag text-muted">🏷 Not specified</span>
         {% endif %}
 
+<<<<<<< HEAD
         {% if property.status == 'for_sale' %}
             <span class="status-badge for-sale">✅ For Sale</span>
         {% elseif property.status == 'for_rent' %}
@@ -153,12 +161,15 @@
             <span class="status-badge" style="background-color: #17a2b8; color: white;">✓ RENTED</span>
         {% endif %}
 
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
         <p class="price">💰 ₱{{ property.price|number_format(2, '.', ',') }}</p>
         <p><span class="details-label">📍 Location:</span> {{ property.location }}</p>
         <p><span class="details-label">🛏 Bedrooms:</span> {{ property.bedrooms }}</p>
         <p><span class="details-label">📝 Description:</span></p>
         <p>{{ property.description }}</p>
 
+<<<<<<< HEAD
         <!-- Buy This Property Section -->
         {% if property.status == 'for_sale' %}
             <div class="buy-section">
@@ -205,6 +216,8 @@
             </div>
         {% endif %}
 
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
         <a href="{{ path('app_property_index') }}" class="btn btn-outline-primary btn-back">⬅ Back to Listings</a>
     </div>
 </div>

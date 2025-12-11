@@ -39,11 +39,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+<<<<<<< HEAD
     # Admin-only routes (users, logs, dashboard)
     - { path: ^/admin/users, roles: ROLE_ADMIN }
     - { path: ^/admin/logs, roles: ROLE_ADMIN }
     - { path: ^/admin/dashboard, roles: ROLE_ADMIN }
     - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+=======
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/staff, roles: ROLE_STAFF }
 

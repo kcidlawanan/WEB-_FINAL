@@ -26,8 +26,18 @@ class ChangePasswordController extends AbstractController
 
             $user = $this->getUser();
 
+<<<<<<< HEAD
             $newPassword = $form->get('newPassword')->getData();
             
+=======
+            $currentPassword = $form->get('currentPassword')->getData();
+            $newPassword = $form->get('newPassword')->getData();
+            if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+                $this->addFlash('error', 'Current password is incorrect.');
+                return $this->redirectToRoute('app_change_password');
+            }
+
+>>>>>>> 63a58c4601c48fc67eac7ae2ac68cad7aef96129
             $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
             $user->setPassword($hashedPassword);
 
