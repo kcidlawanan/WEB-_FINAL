@@ -1,0 +1,202 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block body %}
+<style>
+    .activities-section {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .activities-section h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    #activityTable {
+        background: white !important;
+    }
+
+    #activityTable thead th {
+        background-color: #2d3748 !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 14px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none !important;
+    }
+
+    #activityTable tbody td {
+        padding: 12px 14px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+    }
+
+    #activityTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    .badge-action {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-login {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-logout {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-create {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-update {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-delete {
+        background-color: #fecaca;
+        color: #7f1d1d;
+    }
+
+    .role-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .role-admin {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .role-staff {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .ip-cell {
+        font-size: 0.85rem;
+        color: #4b5563;
+        font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .ip-cell code {
+        background-color: #f0f4f8;
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: #0f172a;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="activities-section">
+        <h2>📋 Activity Logs</h2>
+        
+        {% if logs|length > 0 %}
+            <table id="activityTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Date/Time</th>
+                        <th style="width: 12%;">User</th>
+                        <th style="width: 10%;">Role</th>
+                        <th style="width: 10%;">Action</th>
+                        <th style="width: 35%;">Target</th>
+                        <th style="width: 18%;">IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log.createdAt|date('Y-m-d H:i:s') }}</td>
+                            <td>{{ log.username ?: 'System' }}</td>
+                            <td>
+                                {% if 'ADMIN' in log.role %}
+                                    <span class="badge role-admin">ADMIN</span>
+                                {% elseif 'STAFF' in log.role %}
+                                    <span class="badge role-staff">STAFF</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ log.role ?: '-' }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.action == 'LOGIN' %}
+                                    <span class="badge-action badge-login">✓ LOGIN</span>
+                                {% elseif log.action == 'LOGOUT' %}
+                                    <span class="badge-action badge-logout">✕ LOGOUT</span>
+                                {% elseif log.action == 'CREATE' %}
+                                    <span class="badge-action badge-create">+ CREATE</span>
+                                {% elseif log.action == 'UPDATE' %}
+                                    <span class="badge-action badge-update">✎ UPDATE</span>
+                                {% elseif log.action == 'DELETE' %}
+                                    <span class="badge-action badge-delete">✗ DELETE</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ log.action }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ log.targetData ?: '—' }}</td>
+                            <td class="ip-cell">
+                                {% if log.ipAddress %}
+                                    <code>{{ log.ipAddress }}</code>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted" style="padding: 30px;">📭 No logs found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('activityTable');
+        if (table && !$.fn.DataTable.isDataTable(table)) {
+            $(table).DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100],
+                order: [[0, 'desc']],
+                language: {
+                    search: "🔍 Search logs:",
+                    lengthMenu: "Show _MENU_ entries per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ logs",
+                    infoEmpty: "No logs available",
+                    zeroRecords: "No matching logs found",
+                    paginate: {
+                        previous: "← Previous",
+                        next: "Next →"
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'property.html.twig' %}
+
+{% block title %}🏠 {{ property.title }} - Lawanan Real Estate{% endblock %}
+
+{% block body %}
+<style>
+    .property-details {
+        max-width: 900px;
+        margin: 60px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .property-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .property-info {
+        padding: 30px;
+    }
+
+    .property-info h2 {
+        font-weight: 700;
+        color: #003366;
+        margin-bottom: 15px;
+    }
+
+    .property-info .price {
+        color: #198754;
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
+    .property-info p {
+        color: #555;
+        margin-bottom: 10px;
+        font-size: 1rem;
+    }
+
+    .category-tag {
+        display: inline-block;
+        background: #e7f1ff;
+        color: #004085;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 20px;
+        border-radius: 30px;
+        padding: 8px 20px;
+    }
+
+    .details-label {
+        font-weight: 600;
+        color: #003366;
+    }
+
+    .action-buttons {
+        margin-top: 25px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 10px 0;
+    }
+
+    .status-badge.for-sale {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.for-rent {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+
+    .buy-section {
+        margin-top: 30px;
+        padding: 18px 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 8px;
+        border-left: 3px solid #28a745;
+    }
+
+    .buy-section h3 {
+        color: #003366;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .buy-section p {
+        margin-bottom: 12px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .buy-section .btn-buy {
+        font-size: 1rem;
+        padding: 10px 24px;
+        min-width: auto;
+    }
+
+    @media (max-width: 768px) {
+        .property-image {
+            height: 250px;
+        }
+        .property-info {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="property-details">
+    {% if property.image %}
+        <img src="{{ asset('uploads/images/' ~ property.image) }}" alt="{{ property.title }}" class="property-image">
+    {% else %}
+        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+             alt="Default Property" class="property-image">
+    {% endif %}
+
+    <div class="property-info">
+        <h2>{{ property.title }}</h2>
+
+        {% if property.category %}
+            <span class="category-tag">🏷 {{ property.category.name }}</span>
+        {% else %}
+            <span class="category-tag text-muted">🏷 Not specified</span>
+        {% endif %}
+
+        {% if property.status == 'for_sale' %}
+            <span class="status-badge for-sale">✅ For Sale</span>
+        {% elseif property.status == 'for_rent' %}
+            <span class="status-badge for-rent">🔑 For Rent</span>
+        {% elseif property.status == 'sold' %}
+            <span class="status-badge" style="background-color: #6c757d; color: white;">✓ SOLD</span>
+        {% elseif property.status == 'rented' %}
+            <span class="status-badge" style="background-color: #17a2b8; color: white;">✓ RENTED</span>
+        {% endif %}
+
+        <p class="price">💰 ₱{{ property.price|number_format(2, '.', ',') }}</p>
+        <p><span class="details-label">📍 Location:</span> {{ property.location }}</p>
+        <p><span class="details-label">🛏 Bedrooms:</span> {{ property.bedrooms }}</p>
+        <p><span class="details-label">📝 Description:</span></p>
+        <p>{{ property.description }}</p>
+
+        <!-- Buy This Property Section -->
+        {% if property.status == 'for_sale' %}
+            <div class="buy-section">
+                <h3>🏡 Ready to Buy This Property?</h3>
+                <p style="color: #555; margin-bottom: 20px;">This property is available for purchase. Click the button below to proceed with your purchase.</p>
+                <form method="POST" action="{{ path('app_property_purchase', {'id': property.id}) }}" style="margin: 0;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('app_property_purchase' ~ property.id) }}">
+                    <button type="submit" class="btn btn-success btn-buy" onclick="return confirm('Confirm purchase of {{ property.title }}? Price: ₱{{ property.price|number_format(2, '.', ',') }}')">
+                        💳 Buy This Property - ₱{{ property.price|number_format(2, '.', ',') }}
+                    </button>
+                </form>
+            </div>
+        {% elseif property.status == 'for_rent' %}
+            <div class="buy-section" style="border-left-color: #0dcaf0;">
+                <h3>🔑 Ready to Rent This Property?</h3>
+                <p style="color: #555; margin-bottom: 20px;">This property is available for rent. Click the button below to proceed with your rental.</p>
+                <form method="POST" action="{{ path('app_property_rent', {'id': property.id}) }}" style="margin: 0;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('app_property_rent' ~ property.id) }}">
+                    <button type="submit" class="btn btn-primary btn-buy" onclick="return confirm('Confirm rental of {{ property.title }}? Monthly: ₱{{ property.price|number_format(2, '.', ',') }}')">
+                        🔑 Rent This Property - ₱{{ property.price|number_format(2, '.', ',') }}/month
+                    </button>
+                </form>
+            </div>
+        {% elseif property.status == 'sold' %}
+            <div class="buy-section" style="border-left-color: #6c757d; background-color: #f8d7da;">
+                <h3>✓ Property Sold</h3>
+                <p style="color: #721c24; font-weight: 600;">This property has been successfully sold and is no longer available.</p>
+            </div>
+        {% elseif property.status == 'rented' %}
+            <div class="buy-section" style="border-left-color: #17a2b8; background-color: #d1ecf1;">
+                <h3>✓ Property Rented</h3>
+                <p style="color: #0c5460; font-weight: 600;">This property has been successfully rented and is no longer available.</p>
+            </div>
+        {% else %}
+            <div class="buy-section" style="border-left-color: #28a745;">
+                <h3>🏡 Buy This Property</h3>
+                <p style="color: #555; margin-bottom: 20px;">Interested in this property? Click the button below to make your purchase.</p>
+                <form method="POST" action="{{ path('app_property_purchase', {'id': property.id}) }}" style="margin: 0;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('app_property_purchase' ~ property.id) }}">
+                    <button type="submit" class="btn btn-success btn-buy" onclick="return confirm('Confirm purchase of {{ property.title }}? Price: ₱{{ property.price|number_format(2, '.', ',') }}')">
+                        💳 Buy This Property - ₱{{ property.price|number_format(2, '.', ',') }}
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+
+        <a href="{{ path('app_property_index') }}" class="btn btn-outline-primary btn-back">⬅ Back to Listings</a>
+    </div>
+</div>
+{% endblock %}

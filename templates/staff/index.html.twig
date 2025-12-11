@@ -1,0 +1,282 @@
+{% extends 'staff.html.twig' %}
+
+{% block body %}
+<header>
+    <h1></h1>
+</header>
+
+<style>
+    .section-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .section-header p {
+        color: #718096;
+        margin: 0;
+    }
+
+    .section-actions {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .section-actions .btn {
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 10px 16px;
+    }
+
+    .properties-section {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* --- TABLE STYLE --- */
+    #staffTable {
+        background: white !important;
+        border-collapse: collapse !important;
+    }
+
+    #staffTable thead th {
+        background-color: #2d3748 !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 14px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none !important;
+    }
+
+    #staffTable tbody td {
+        padding: 12px 14px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+    }
+
+    #staffTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+    }
+
+    .action-buttons .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+    }
+
+    /* --- DATATABLES CONTROL STYLING --- */
+    .dataTables_wrapper {
+        margin-top: 20px;
+        font-size: 0.95rem;
+    }
+
+    .dataTables_length,
+    .dataTables_filter {
+        background: #f7fafc;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+    .dataTables_length label,
+    .dataTables_filter label {
+        margin: 0;
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .dataTables_length select,
+    .dataTables_filter input {
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .dataTables_length select:focus,
+    .dataTables_filter input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    .dataTables_info {
+        background: #f7fafc;
+        padding: 12px 15px;
+        border-radius: 6px;
+        color: #2d3748;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    .dataTables_paginate {
+        margin-top: 15px;
+        text-align: right;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 4px !important;
+        padding: 8px 12px !important;
+        margin: 0 2px !important;
+        background-color: #e2e8f0 !important;
+        color: #2d3748 !important;
+        border: none !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #667eea !important;
+        color: white !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #667eea !important;
+        color: white !important;
+    }
+
+    .price-cell {
+        font-weight: 600;
+        color: #22c55e;
+</style>
+
+<div class="container-fluid">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success text-center" id="flash-message">{{ message }}</div>
+    {% endfor %}
+
+    <div class="properties-section">
+        <div class="section-header">
+            <h2>📋 PROPERTY MANAGEMENT</h2>
+            <p></p>
+        </div>
+
+        <div class="section-actions">
+            <a href="{{ path('app_property_new') }}" class="btn btn-success">➕ Add New Property</a>
+        </div>
+
+    <table id="staffTable" class="table table-bordered table-striped admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Location</th>
+                <th>Bedrooms</th>
+                <th>Category</th>
+                <th>Added By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for property in properties %}
+            <tr>
+                <td>{{ property.id }}</td>
+                <td>{{ property.title }}</td>
+                <td>{{ property.description|slice(0, 30) ~ '...' }}</td>
+                <td class="price-cell">₱{{ property.price|number_format(2) }}</td>
+                <td>{{ property.location }}</td>
+                <td class="bedrooms-cell">{{ property.bedrooms }} 🛏️</td>
+                <td>
+                    {% if property.category %}
+                        <span class="category-badge">{{ property.category.name }}</span>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if property.owner %}
+                        {% if property.owner.id == app.user.id %}
+                            <span class="badge bg-success" style="font-size: 0.85rem;">👤 You</span>
+                        {% else %}
+                            <span class="badge bg-info" style="font-size: 0.85rem;">👤 {{ property.owner.name ?? property.owner.email }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        {% if is_granted('ROLE_ADMIN') or (property.owner is not null and property.owner.id == app.user.id) %}
+                            <a href="{{ path('app_property_edit', {'id': property.id}) }}" class="btn btn-warning btn-sm">✏️ Edit</a>
+                            <form method="post" action="{{ path('app_property_delete', {'id': property.id}) }}" style="display:inline-block;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ property.id) }}">
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted text-center" style="display: inline-block; padding: 6px 12px;">🔒 Read Only</span>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9" class="text-center text-muted" style="padding: 30px;">🏚️ No properties found.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<!-- AUTO-HIDE FLASH MESSAGE -->
+<script>
+    setTimeout(() => {
+        const msg = document.getElementById('flash-message');
+        if (msg) msg.style.display = 'none';
+    }, 3000);
+</script>
+
+<!-- DATATABLE INIT -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        new DataTable('#staffTable', {
+            responsive: true,
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
+            language: {
+                search: "🔍 Search:",
+                lengthMenu: "Show _MENU_ entries per page",
+                info: "Showing _START_ to _END_ of _TOTAL_ properties",
+                infoEmpty: "No properties available",
+                zeroRecords: "No matching records found",
+                paginate: {
+                    previous: "⬅️",
+                    next: "➡️"
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

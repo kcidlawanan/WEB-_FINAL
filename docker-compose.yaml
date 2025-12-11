@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: symfony_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_test
+      MYSQL_DATABASE: root_test
+      MYSQL_USER: dicklawanan
+      MYSQL_PASSWORD: lawanan123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - symfony_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: symfony_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: dicklawanan
+      PMA_PASSWORD: lawanan123
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - symfony_network
+
+volumes:
+  mysql_data:
+
+networks:
+  symfony_network:

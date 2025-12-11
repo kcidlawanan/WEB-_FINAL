@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- ✅ Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ✅ Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- ✅ DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.min.css">
+
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .navbar {
+            margin-left: 250px;
+        }
+        /* Table & UI polish for consistent, high-contrast admin visuals */
+        .content h2, .content h1 {
+            color: #0d6efd; /* Bootstrap primary */
+        }
+
+        .table thead th {
+            background-color: #0d6efd;
+            color: #ffffff;
+            border: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            color: #343a40;
+        }
+
+        .badge {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge-primary-custom { background-color: #0d6efd; }
+        .badge-info-custom { background-color: #0dcaf0; color: #06364a; }
+
+        .btn {
+            border-radius: 6px;
+        }
+
+        .btn-edit { background-color: #f59f00; border-color: #f59f00; color: #fff; }
+        .btn-delete { background-color: #dc3545; border-color: #dc3545; color: #fff; }
+
+        /* Improve sidebar link contrast and spacing */
+        .sidebar a { padding: 12px 18px; }
+        .sidebar .sidebar-title { color: #fff; text-decoration: none; }
+
+        /* Sidebar sections */
+        .sidebar-section {
+            border-top: 1px solid #495057;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        .sidebar-section:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #adb5bd;
+            padding: 8px 18px;
+            margin: 0;
+        }
+
+        /* Make main container breathe */
+        .content { padding: 36px; }
+    </style>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2 class="text-center"><a href="{{ path('app_staff') }}" class="sidebar-title">🏠Staff Dashboard</a></h2>
+        
+        <!-- Main Navigation -->
+        <div class="sidebar-section">
+            <a href="{{ path('app_property_index') }}">📋 Property Market</a>
+            {% if is_granted('ROLE_STAFF') %}
+            {% endif %}
+        </div>
+
+        <!-- Admin Account Section -->
+        {% if is_granted('ROLE_STAFF') %}
+        <div class="sidebar-section">
+            <a href="{{ path('app_profile') }}">👤 My Profile</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 🌆 NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Add navbar items if needed -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🌸 MAIN CONTENT -->
+    <main class="content">
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- 🌍 FOOTER -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">© {{ "now"|date("Y") }} Lawanan Real Estate — All Rights Reserved</p>
+    </footer>
+
+    <!-- ✅ Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ✅ jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- ✅ DataTables JS -->
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- ✅ DataTables Responsive -->
+    <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize DataTables only for tables that aren't already initialized
+            const tables = document.querySelectorAll('.table');
+            tables.forEach(table => {
+                if (!$.fn.DataTable.isDataTable(table)) {
+                    $(table).DataTable({
+                        responsive: true,
+                        pageLength: 5,
+                        lengthMenu: [5, 10, 25, 50],
+                        language: {
+                            search: "🔍 Search:",
+                            lengthMenu: "Show _MENU_ entries per page",
+                            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                            infoEmpty: "No entries available",
+                            zeroRecords: "No matching records found",
+                            paginate: { previous: "⬅️", next: "➡️" }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

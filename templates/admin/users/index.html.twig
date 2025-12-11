@@ -1,0 +1,345 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}User Management{% endblock %}
+
+{% block body %}
+<style>
+    .section-header {
+        margin-bottom: 30px;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .section-header p {
+        color: #718096;
+        margin: 0;
+    }
+
+    .section-actions {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .section-actions .btn {
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 10px 16px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .section-actions .btn-success {
+        background-color: #16a34a;
+        color: white;
+    }
+
+    .section-actions .btn-success:hover {
+        background-color: #15803d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    }
+
+    .users-section {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* --- TABLE STYLE --- */
+    #usersTable {
+        background: white !important;
+        border-collapse: collapse !important;
+    }
+
+    #usersTable thead th {
+        background-color: #2d3748 !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 14px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none !important;
+    }
+
+    #usersTable tbody td {
+        padding: 12px 14px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+    }
+
+    #usersTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    .role-badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .role-badge.admin {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .role-badge.staff {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .role-badge.user {
+        background-color: #f3e8ff;
+        color: #6b21a8;
+    }
+
+    .date-cell {
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .action-buttons .btn-warning {
+        background-color: #f59f00;
+        color: white;
+    }
+
+    .action-buttons .btn-warning:hover {
+        background-color: #e08c00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(245, 159, 0, 0.3);
+    }
+
+    .action-buttons .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .action-buttons .btn-danger:hover {
+        background-color: #bb2d3b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    .action-buttons .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+    }
+
+    .action-buttons .btn-secondary:hover {
+        background-color: #4b5563;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
+    }
+
+    /* --- DATATABLES CONTROL STYLING --- */
+    .dataTables_wrapper {
+        margin-top: 20px;
+        font-size: 0.95rem;
+    }
+
+    .dataTables_length,
+    .dataTables_filter {
+        background: #f7fafc;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+    .dataTables_length label,
+    .dataTables_filter label {
+        margin: 0;
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .dataTables_length select,
+    .dataTables_filter input {
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .dataTables_length select:focus,
+    .dataTables_filter input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    .dataTables_info {
+        background: #f7fafc;
+        padding: 12px 15px;
+        border-radius: 6px;
+        color: #2d3748;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    .dataTables_paginate {
+        margin-top: 15px;
+        text-align: right;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 4px !important;
+        padding: 8px 12px !important;
+        margin: 0 2px !important;
+        background-color: #e2e8f0 !important;
+        color: #2d3748 !important;
+        border: none !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #667eea !important;
+        color: white !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #667eea !important;
+        color: white !important;
+    }
+</style>
+
+<div class="container-fluid">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success text-center" id="flash-message">{{ message }}</div>
+    {% endfor %}
+
+    <div class="users-section">
+        <div class="section-header">
+            <h2>👤 User/Staff Management</h2>
+        </div>
+
+        <div class="section-actions">
+            <a href="{{ path('admin_users_new') }}" class="btn btn-success">➕ Create New User</a>
+        </div>
+
+        <table id="usersTable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td><strong>{{ user.name is not empty ? user.name : user.userIdentifier }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <div class="role-badges">
+                            {% for role in user.roles %}
+                                {% if 'ADMIN' in role %}
+                                    <span class="role-badge admin">{{ role }}</span>
+                                {% elseif 'STAFF' in role %}
+                                    <span class="role-badge staff">{{ role }}</span>
+                                {% else %}
+                                    <span class="role-badge user">{{ role }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if user.isActive %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="date-cell">{{ user.createdAt|date('Y-m-d') }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="btn btn-warning btn-sm">✏️ Edit</a>
+                            <form method="post" action="{{ path('admin_users_delete', {'id': user.id}) }}" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                            </form>
+                            <form method="post" action="{{ path('admin_users_disable', {'id': user.id}) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm {% if user.isActive %}btn-secondary{% else %}btn-success{% endif %}">
+                                    {% if user.isActive %}🚫 Disable{% else %}✅ Enable{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted" style="padding: 30px;">👥 No users found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('usersTable');
+        if (table && !$.fn.DataTable.isDataTable(table)) {
+            $(table).DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100],
+                language: {
+                    search: "🔍 Search users:",
+                    lengthMenu: "Show _MENU_ entries per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ users",
+                    infoEmpty: "No users available",
+                    zeroRecords: "No matching users found",
+                    paginate: {
+                        previous: "← Previous",
+                        next: "Next →"
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+{% endblock %}
